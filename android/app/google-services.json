@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1041649044360",
+    "project_id": "gywreb-reminder",
+    "storage_bucket": "gywreb-reminder.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1041649044360:android:a10b9d4ca88fbe044f483d",
+        "android_client_info": {
+          "package_name": "com.gywrebreminder"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1041649044360-t1uf3t8g5913v7uuaq53dk6rs6a2i4nf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAYESIRs5hOJmNvDmzpoEaheVAqM1MS4Qk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1041649044360-t1uf3t8g5913v7uuaq53dk6rs6a2i4nf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
