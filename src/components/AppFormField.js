@@ -1,10 +1,11 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
-import {useFormikContext} from 'formik';
-import {Input, Text} from 'react-native-elements';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
+import { StyleSheet, View } from 'react-native';
+import { useFormikContext } from 'formik';
+import { Input, Text } from 'react-native-elements';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import colors from '../configs/colors';
 
-const AppFormField = ({name, ...componentProps}) => {
+const AppFormField = ({ name, ...componentProps }) => {
   const {
     values,
     setFieldValue,
@@ -19,21 +20,19 @@ const AppFormField = ({name, ...componentProps}) => {
         onChangeText={(text) => setFieldValue(name, text)}
         onBlur={() => setFieldTouched(name, true)}
         {...componentProps}
+        errorMessage={errors[name] && touched[name] ? errors[name] : null}
+        inputContainerStyle={styles.inputContainer}
       />
-      {errors[name] && touched[name] && (
-        <Text style={styles.error}>{errors[name]}</Text>
-      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    margin: 10,
-  },
-  error: {
-    marginLeft: '3%',
-    color: 'red',
+  inputContainer: {
+    borderRadius: 15,
+    padding: 10,
+    backgroundColor: colors.light,
+    borderBottomWidth: 0,
   },
 });
 
