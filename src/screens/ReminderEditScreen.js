@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
@@ -16,6 +16,7 @@ import moment from "moment";
 import { useNavigation } from "@react-navigation/core";
 import AppFormPicker from "../components/AppFormPicker";
 import { ScrollView } from "react-native-gesture-handler";
+import calcNext, { addDate, isScheduleBehind } from "../utils/calcSchedule";
 
 const initialValues = {
   title: "",
@@ -42,29 +43,38 @@ const validationSchema = Yup.object().shape({
 const ReminderEditScreen = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
-  const { list } = useSelector((state) => state.reminders);
-  const [date, setDate] = useState(dayjs().format("DD/MM/YYYY"));
-  const [time, setTime] = useState(dayjs().format("HH:mm"));
+  const { lastId } = useSelector((state) => state.reminders);
+  const [date, setDate] = useState(new Date(Date.now()));
+  const [time, setTime] = useState(new Date(Date.now()));
+  const [isDateEnabled, setIsDateEnabled] = useState(false);
   const [pickSchedule, setPickSchedule] = useState(new Date(Date.now()));
   const [visible, setVisible] = useState(false);
   const [mode, setMode] = useState("time");
   const [repeatValue, setRepeatValue] = useState(options[0].value);
+  const [minDate, setMinDate] = useState(new Date(Date.now()));
 
   const handleAddReminder = (values) => {
+    const validId = lastId + 1;
+
+    console.log(pickSchedule);
+
     const notiConfig = {
       title: values.title,
-      description: `${values.description}\nRepeat daily every ${dayjs(
-        pickSchedule
-      ).format("HH:mm")}`,
+      description: `${values.description}`,
       repeatType: values.isRepeat ? repeatValue : null,
     };
 
-    console.log(dayjs(pickSchedule).format());
-
-    LocalScheduleNotification(pickSchedule, list.length + 1, notiConfig);
+    LocalScheduleNotification(pickSchedule, validId, notiConfig);
     dispatch({
       type: ADD_REMINDER,
-      payload: { ...values, id: list.length + 1 },
+      payload: {
+        ...values,
+        id: validId,
+        repeatType: values.isRepeat
+          ? options.find((type) => type.value === repeatValue).label
+          : null,
+        date: dayjs(pickSchedule).format(),
+      },
     });
 
     navigation.navigate("Home");
@@ -76,16 +86,53 @@ const ReminderEditScreen = () => {
   };
 
   const handleDatePick = (date) => {
-    setPickSchedule(date);
-    setDate(dayjs(date).format("DD/MM/YYYY"));
+    const pickDate = moment(date);
+    const pickTime = moment(time);
+    const newDate = new Date(
+      pickDate.year(),
+      pickDate.month(),
+      pickDate.date(),
+      pickTime.hours(),
+      pickTime.minutes(),
+      pickTime.seconds(),
+      pickTime.milliseconds()
+    );
+    setPickSchedule(newDate);
+    setDate(date);
     setVisible(false);
   };
 
-  const handleTimePick = (date) => {
-    setPickSchedule(date);
-    setTime(dayjs(date).format("HH:mm"));
+  const handleTimePick = (time) => {
+    const pickDate = moment(date);
+    const pickTime = moment(time);
+    const newDate = new Date(
+      pickDate.year(),
+      pickDate.month(),
+      pickDate.date(),
+      pickTime.hours(),
+      pickTime.minutes(),
+      pickTime.seconds(),
+      pickTime.milliseconds()
+    );
+    setPickSchedule(newDate);
+    setTime(time);
     setVisible(false);
   };
+
+  useEffect(() => {
+    if (isScheduleBehind(dayjs(pickSchedule), dayjs())) {
+      console.log(addDate(dayjs()).toDate());
+      setMinDate(addDate(dayjs()).toDate());
+      setDate(addDate(dayjs()).toDate());
+    } else {
+      if (!isDateEnabled) {
+        setMinDate(dayjs().toDate());
+        setDate(dayjs());
+      }
+    }
+  }, [pickSchedule]);
+
+  console.log(isDateEnabled);
 
   return (
     <ScrollView>
@@ -107,7 +154,7 @@ const ReminderEditScreen = () => {
                 <AppFormDatePicker
                   pickerMode="time"
                   icon="calendar-clock"
-                  value={time}
+                  value={dayjs(time).format("HH:mm")}
                   name="isTimePick"
                   onOpen={handleOpenPicker}
                   title="Set Time"
@@ -118,13 +165,14 @@ const ReminderEditScreen = () => {
                 <AppFormDatePicker
                   pickerMode="date"
                   icon="calendar-today"
-                  value={date}
+                  value={dayjs(date).format("DD/MM/YYYY")}
                   name="isDatePick"
                   onOpen={handleOpenPicker}
                   title="Set Date"
-                  onToggle={() =>
-                    setFieldValue("isDatePick", !values["isDatePick"])
-                  }
+                  onToggle={() => {
+                    setIsDateEnabled(!values["isDatePick"]);
+                    setFieldValue("isDatePick", !values["isDatePick"]);
+                  }}
                 />
                 <AppFormPicker
                   options={options}
@@ -139,7 +187,7 @@ const ReminderEditScreen = () => {
                 />
                 <DateTimeModalPicker
                   is24Hour={true}
-                  minimumDate={new Date(Date.now())}
+                  minimumDate={minDate}
                   mode={mode}
                   isVisible={visible}
                   onCancel={() => setVisible(false)}

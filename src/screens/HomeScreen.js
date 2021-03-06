@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
-import { StyleSheet, View, FlatList } from "react-native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import { Button, Text } from "react-native-elements";
+import { StyleSheet, View, FlatList, Text } from "react-native";
+import { Button } from "react-native-elements";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { useNavigation } from "@react-navigation/core";
 import { useSelector } from "react-redux";
@@ -32,9 +31,7 @@ const HomeScreen = () => {
 
   return (
     <AppScreen style={styles.container}>
-      <Text h2 style={styles.text}>
-        SCHEDULE REMINDER
-      </Text>
+      <Text style={styles.text}>SCHEDULE REMINDER</Text>
       <Button
         containerStyle={styles.buttonContainer}
         buttonStyle={styles.button}
@@ -57,7 +54,12 @@ const HomeScreen = () => {
               style={{ width: "100%" }}
               data={list}
               keyExtractor={(item) => item.id.toString()}
-              renderItem={({ item }) => <AppListItem item={item} />}
+              renderItem={({ item }) => (
+                <AppListItem
+                  item={item}
+                  onPress={() => navigation.navigate("ReminderDetail", item)}
+                />
+              )}
             />
           </View>
         </ScrollView>
@@ -73,7 +75,6 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     alignItems: "center",
-    backgroundColor: colors.light,
   },
   buttonContainer: {
     marginTop: 50,
@@ -86,7 +87,10 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   text: {
+    textAlign: "center",
     marginTop: 50,
+    fontWeight: "bold",
+    fontSize: 32,
   },
   title: {
     textTransform: "uppercase",

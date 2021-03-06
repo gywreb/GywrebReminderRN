@@ -34,30 +34,10 @@ export const PushNotificationInit = () => {
   );
 };
 
-function calcNext(date) {
-  const now = dayjs();
-
-  // 1) set nextNotifTime to today's date
-  let nextNotificationTime = dayjs(date)
-    .year(now.year())
-    .month(now.month())
-    .date(now.date());
-
-  // 2) IF nextNotifTime date is < right now
-  if (nextNotificationTime.isBefore(now)) {
-    //  THEN add 1day to NotifTime
-    nextNotificationTime = nextNotificationTime.add(1, "day");
-  }
-
-  return nextNotificationTime.toDate();
-}
-
-export const LocalScheduleNotification = (time, id, notiConfig) => {
-  const date = calcNext(time);
-
+export const LocalScheduleNotification = (date, id, notiConfig) => {
   const { description, title, repeatType } = notiConfig;
-
-  console.log(notiConfig);
+  console.log(date);
+  // console.log(notiConfig);
 
   PushNotification.localNotificationSchedule({
     id,
@@ -66,7 +46,7 @@ export const LocalScheduleNotification = (time, id, notiConfig) => {
     title,
     message: "Expand to see more details",
     vibrate: true,
-    vibration: 300,
+    vibration: 1000,
     playSound: true,
     soundName: "default",
     date,
