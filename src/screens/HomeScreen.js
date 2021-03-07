@@ -1,9 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View, FlatList, Text } from "react-native";
 import { Button } from "react-native-elements";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { useNavigation } from "@react-navigation/core";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import AppListItem from "../components/AppListItem";
 import colors from "../configs/colors";
 import AppScreen from "../components/AppScreen";
@@ -12,12 +12,13 @@ import { GetLocalScheduleNotifications } from "../services/LocalPushController";
 import RNDisableBatteryOptimizationsAndroid from "react-native-disable-battery-optimizations-android";
 
 const HomeScreen = () => {
+  const dispatch = useDispatch();
   const { list } = useSelector((state) => state.reminders);
   const navigation = useNavigation();
 
   useEffect(() => {
-    GetLocalScheduleNotifications();
-  }, []);
+    GetLocalScheduleNotifications(dispatch);
+  }, [list]);
 
   useEffect(() => {
     RNDisableBatteryOptimizationsAndroid.isBatteryOptimizationEnabled().then(
@@ -31,6 +32,22 @@ const HomeScreen = () => {
 
   return (
     <AppScreen style={styles.container}>
+      <Button
+        containerStyle={styles.debugButton}
+        buttonStyle={styles.debugButtonContainer}
+        titleProps={{ style: { fontSize: 10, color: "white" } }}
+        title="Notification List"
+        titleStyle={styles.title}
+        icon={
+          <Icon
+            name="alarm"
+            color="white"
+            size={10}
+            style={{ marginRight: 5 }}
+          />
+        }
+        onPress={() => navigation.navigate("NotiList")}
+      />
       <Text style={styles.text}>SCHEDULE REMINDER</Text>
       <Button
         containerStyle={styles.buttonContainer}
@@ -47,6 +64,7 @@ const HomeScreen = () => {
         }
         onPress={() => navigation.navigate("ReminderEdit")}
       />
+
       {list.length ? (
         <ScrollView style={styles.reminderList}>
           <View>
@@ -76,6 +94,11 @@ const styles = StyleSheet.create({
     height: "100%",
     alignItems: "center",
   },
+  debugButton: {
+    alignSelf: "flex-end",
+    marginRight: 10,
+    padding: 0,
+  },
   buttonContainer: {
     marginTop: 50,
   },
@@ -88,9 +111,9 @@ const styles = StyleSheet.create({
   },
   text: {
     textAlign: "center",
-    marginTop: 50,
+    marginTop: 30,
     fontWeight: "bold",
-    fontSize: 32,
+    fontSize: 26,
   },
   title: {
     textTransform: "uppercase",

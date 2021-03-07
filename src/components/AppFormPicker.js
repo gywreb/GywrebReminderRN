@@ -39,7 +39,7 @@ const AppFormPicker = ({
               style={styles.select}
               selectedValue={selectedValue}
               onValueChange={onPick}
-              itemStyle={{ color: colors.black }}
+              prompt="Choose repeat type"
             >
               {options.map((item) => (
                 <Picker.Item

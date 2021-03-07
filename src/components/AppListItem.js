@@ -10,7 +10,7 @@ import AppDeleteButton from "./AppDeleteButton";
 import dayjs from "dayjs";
 import colors from "../configs/colors";
 
-const AppListItem = ({ item, onPress }) => {
+const AppListItem = ({ item, onPress, noRight = true }) => {
   const dispatch = useDispatch();
   const handleDelete = () => {
     CancelLocalScheduleNotification(item.id);
@@ -35,29 +35,31 @@ const AppListItem = ({ item, onPress }) => {
             </ListItem.Subtitle>
           ) : null}
         </ListItem.Content>
-        <View>
-          <View style={styles.repeatInfo}>
-            {item.isRepeat ? (
-              <MIcon style={styles.icon} name="update" size={25} />
-            ) : (
-              <MIcon style={styles.icon} name="calendar-check" size={25} />
-            )}
-            <Text style={styles.repeatType}>
-              {item.repeatType ? item.repeatType : "Only once"}
-            </Text>
-          </View>
-          {item.isRepeat ? (
-            <Text style={styles.date}>
-              {dayjs(item.date).format(
-                item.repeatType === "Daily" ? "HH:mm" : "HH:mm - DD/MM/YYYY"
+        {noRight && (
+          <View>
+            <View style={styles.repeatInfo}>
+              {item.isRepeat ? (
+                <MIcon style={styles.icon} name="update" size={25} />
+              ) : (
+                <MIcon style={styles.icon} name="calendar-check" size={25} />
               )}
-            </Text>
-          ) : (
-            <Text style={styles.date}>
-              {dayjs(item.date).format("HH:mm - DD/MM/YYYY")}
-            </Text>
-          )}
-        </View>
+              <Text style={styles.repeatType}>
+                {item.repeatType ? item.repeatType : "Only once"}
+              </Text>
+            </View>
+            {item.isRepeat ? (
+              <Text style={styles.date}>
+                {dayjs(item.date).format(
+                  item.repeatType === "Daily" ? "HH:mm" : "HH:mm - DD/MM/YYYY"
+                )}
+              </Text>
+            ) : (
+              <Text style={styles.date}>
+                {dayjs(item.date).format("HH:mm - DD/MM/YYYY")}
+              </Text>
+            )}
+          </View>
+        )}
       </ListItem>
     </Swipeable>
   );

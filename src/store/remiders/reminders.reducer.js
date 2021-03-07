@@ -1,8 +1,9 @@
-import { ADD_REMINDER, REMOVE_REMINDER } from "./reminders.action";
+import { ADD_REMINDER, GET_NOTIS, REMOVE_REMINDER } from "./reminders.action";
 
 const initialState = {
   lastId: 0,
   list: [],
+  notiList: [],
 };
 
 export default function reminderReducer(state = initialState, action) {
@@ -13,6 +14,9 @@ export default function reminderReducer(state = initialState, action) {
         list: [...state.list, { ...action.payload }],
         lastId: state.lastId + 1,
       };
+    }
+    case GET_NOTIS: {
+      return { ...state, notiList: [...action.payload] };
     }
     case REMOVE_REMINDER: {
       return {

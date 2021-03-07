@@ -45,8 +45,7 @@ const ReminderEditScreen = () => {
   const navigation = useNavigation();
   const { lastId } = useSelector((state) => state.reminders);
   const [date, setDate] = useState(new Date(Date.now()));
-  const [time, setTime] = useState(new Date(Date.now()));
-  const [isDateEnabled, setIsDateEnabled] = useState(false);
+  const [time, setTime] = useState(dayjs().add(5, "minutes").toDate());
   const [pickSchedule, setPickSchedule] = useState(new Date(Date.now()));
   const [visible, setVisible] = useState(false);
   const [mode, setMode] = useState("time");
@@ -116,23 +115,14 @@ const ReminderEditScreen = () => {
     );
     setPickSchedule(newDate);
     setTime(time);
-    setVisible(false);
-  };
-
-  useEffect(() => {
-    if (isScheduleBehind(dayjs(pickSchedule), dayjs())) {
-      console.log(addDate(dayjs()).toDate());
+    if (isScheduleBehind(dayjs(time), dayjs())) {
       setMinDate(addDate(dayjs()).toDate());
       setDate(addDate(dayjs()).toDate());
     } else {
-      if (!isDateEnabled) {
-        setMinDate(dayjs().toDate());
-        setDate(dayjs());
-      }
+      setMinDate(dayjs().toDate());
     }
-  }, [pickSchedule]);
-
-  console.log(isDateEnabled);
+    setVisible(false);
+  };
 
   return (
     <ScrollView>
@@ -169,10 +159,9 @@ const ReminderEditScreen = () => {
                   name="isDatePick"
                   onOpen={handleOpenPicker}
                   title="Set Date"
-                  onToggle={() => {
-                    setIsDateEnabled(!values["isDatePick"]);
-                    setFieldValue("isDatePick", !values["isDatePick"]);
-                  }}
+                  onToggle={() =>
+                    setFieldValue("isDatePick", !values["isDatePick"])
+                  }
                 />
                 <AppFormPicker
                   options={options}

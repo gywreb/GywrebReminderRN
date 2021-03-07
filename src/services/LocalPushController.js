@@ -2,13 +2,14 @@ import PushNotificationIOS from "@react-native-community/push-notification-ios";
 import dayjs from "dayjs";
 import PushNotification from "react-native-push-notification";
 import { NOTIFICATION_CHANNELID } from "@env";
+import { GET_NOTIS } from "../store/remiders/reminders.action";
 
 export const PushNotificationInit = () => {
   PushNotification.configure({
     // (required) Called when a remote or local notification is opened or received
     onNotification: function (notification) {
       console.log("NOTIFICATION:", notification);
-      // console.log(new Date(notification.fireDate).getDate());
+      console.log(dayjs(notification.firedate).format("HH:mm DD/MM/YYYY"));
       // console.log(
       //   new Date(notification.fireDate).getHours(),
       //   new Date(notification.fireDate).getMinutes()
@@ -55,10 +56,13 @@ export const LocalScheduleNotification = (date, id, notiConfig) => {
   });
 };
 
-export const GetLocalScheduleNotifications = () => {
-  PushNotification.getScheduledLocalNotifications((notis) =>
-    console.log(notis)
-  );
+export const GetLocalScheduleNotifications = (dispatch) => {
+  let notiList = [];
+  PushNotification.getScheduledLocalNotifications((notis) => {
+    notiList = [...notis];
+    dispatch({ type: GET_NOTIS, payload: notis });
+  });
+  return notiList;
 };
 
 export const CancelLocalScheduleNotification = (id) => {
