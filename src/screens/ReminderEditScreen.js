@@ -102,7 +102,14 @@ const ReminderEditScreen = () => {
   };
 
   const handleTimePick = (time) => {
-    const pickDate = moment(date);
+    let calcDate = date;
+    if (isScheduleBehind(dayjs(time), dayjs())) {
+      setMinDate(addDate(dayjs()).toDate());
+      calcDate = addDate(dayjs(date)).toDate();
+    } else {
+      setMinDate(dayjs().toDate());
+    }
+    const pickDate = moment(calcDate);
     const pickTime = moment(time);
     const newDate = new Date(
       pickDate.year(),
@@ -115,12 +122,7 @@ const ReminderEditScreen = () => {
     );
     setPickSchedule(newDate);
     setTime(time);
-    if (isScheduleBehind(dayjs(time), dayjs())) {
-      setMinDate(addDate(dayjs()).toDate());
-      setDate(addDate(dayjs()).toDate());
-    } else {
-      setMinDate(dayjs().toDate());
-    }
+    setDate(calcDate);
     setVisible(false);
   };
 
