@@ -46,7 +46,9 @@ const ReminderEditScreen = () => {
   const { lastId } = useSelector((state) => state.reminders);
   const [date, setDate] = useState(new Date(Date.now()));
   const [time, setTime] = useState(dayjs().add(5, "minutes").toDate());
-  const [pickSchedule, setPickSchedule] = useState(new Date(Date.now()));
+  const [pickSchedule, setPickSchedule] = useState(
+    dayjs().add(5, "minutes").toDate()
+  );
   const [visible, setVisible] = useState(false);
   const [mode, setMode] = useState("time");
   const [repeatValue, setRepeatValue] = useState(options[0].value);
